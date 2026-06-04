@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Last Call Bar</title>
+    <link rel="stylesheet" href="styles.css?v=exclusionbuttonalways1">
+</head>
+<body>
+    <main class="game-shell">
+        <section class="bar-stage" aria-label="Last Call Bar game">
+            <header class="top-bar">
+                <div>
+                    <p class="kicker">Last Call Bar</p>
+                    <h1>ラストコール・バー</h1>
+                </div>
+                <div class="stats" aria-label="game stats">
+                    <span><b id="score">0</b><small>score</small></span>
+                    <span><b id="streak">0</b><small>streak</small></span>
+                </div>
+            </header>
+
+            <div class="scene">
+                <div class="neon-sign">OPEN</div>
+                <div class="shelf" aria-hidden="true">
+                    <span class="bottle tall coral"></span>
+                    <span class="bottle short mint"></span>
+                    <span class="bottle tall gold"></span>
+                    <span class="bottle medium blue"></span>
+                    <span class="bottle short rose"></span>
+                    <span class="bottle tall lime"></span>
+                </div>
+
+                <div class="bar-counter">
+                    <div class="glass" id="glass" aria-label="current drink glass">
+                        <div class="liquid" id="liquid"></div>
+                        <div class="foam"></div>
+                        <div class="stir-stick" aria-hidden="true"></div>
+                    </div>
+                    <div class="current-order">
+                        <div class="actions order-actions">
+                            <button id="startButton" type="button">スタート</button>
+                            <button id="shakeButton" class="secondary serve-button shake-serve" type="button" disabled>シェイクして提供</button>
+                            <button id="stirButton" class="secondary serve-button stir-serve" type="button" disabled>ステアして提供</button>
+                            <button id="nextButton" class="secondary" type="button" hidden>次へ</button>
+                        </div>
+                        <p>注文</p>
+                        <h2 id="orderName">開店準備中</h2>
+                        <div class="recipe" id="recipe"></div>
+                        <label class="curated-check" id="curatedCheckLabel" hidden>
+                            <input id="curatedExcludeCheck" type="checkbox">
+                            <span>この問題は正解したら厳選問題から除外する</span>
+                        </label>
+                        <label class="curated-check" id="priorityCheckLabel" hidden>
+                            <input id="priorityExcludeCheck" type="checkbox">
+                            <span>この問題は正解したら重点問題から除外する</span>
+                        </label>
+                        <div class="mix-status" id="mixStatus">スタートで最初の問題を出題します。</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="mode-panel" aria-label="mode controls">
+                    <button id="simpleModeButton" class="mode-button selected" type="button">簡易モード</button>
+                    <button id="staffModeButton" class="mode-button" type="button">従業員モード</button>
+                </div>
+                <div class="scope-panel" aria-label="question target controls">
+                    <button id="dailyScopeButton" class="mode-button" type="button">今日の3問で開始</button>
+                    <button id="priorityScopeButton" class="mode-button" type="button">重点問題で開始</button>
+                    <button id="curatedScopeButton" class="mode-button selected" type="button">厳選問題で開始</button>
+                    <button id="allScopeButton" class="mode-button" type="button">全問題で開始</button>
+                </div>
+                <div class="glass-panel">
+                    <p>グラス</p>
+                    <div class="glass-buttons" id="glassButtons"></div>
+                </div>
+                <div class="ingredient-panel">
+                    <p>材料</p>
+                    <div class="ingredient-buttons" id="ingredientButtons"></div>
+                </div>
+                <div class="measure-panel" id="measurePanel" aria-label="amount controls">
+                    <p>分量</p>
+                    <div class="measure-buttons" id="measureButtons"></div>
+                </div>
+            </div>
+
+            <footer class="actions utility-actions">
+                <button id="resetButton" class="ghost" type="button">リセット</button>
+                <button id="reloadOrdersButton" class="ghost" type="button">orders.txt反映</button>
+            </footer>
+        </section>
+
+        <aside class="side-panel">
+            <section>
+                <h2>未正解</h2>
+                <p id="progressSummary">読み込み中です。</p>
+                <div class="list-view-toggle" aria-label="cocktail list view">
+                    <button id="activeListButton" class="list-view-button selected" type="button">出題対象一覧</button>
+                    <button id="excludedListButton" class="list-view-button" type="button">厳選対象外</button>
+                    <button id="priorityExcludedListButton" class="list-view-button" type="button">重点対象外</button>
+                </div>
+                <ol id="solvedList" class="progress-list"></ol>
+                <button id="saveSolvedButton" class="save-progress-action" type="button">現在の正解済みを保存</button>
+                <button id="loadSolvedButton" class="save-progress-action" type="button">保存した正解済みをロード</button>
+                <button id="clearSolvedButton" class="danger-action" type="button">正解済みをクリアして最初から</button>
+                <button id="showExclusionsButton" class="save-progress-action exclusion-list-action" type="button">除外一覧を表示</button>
+                <div id="exclusionExportPanel" class="exclusion-export" hidden>
+                    <h3>exclusions.txt上書き用一覧</h3>
+                    <textarea id="exclusionExportText" readonly rows="10"></textarea>
+                </div>
+            </section>
+            <section>
+                <h2>バーテンダーメモ</h2>
+                <p>未正解のカクテル名を押すと、その問題を直接出題できます。正解した注文は保存され、次回から出題されません。</p>
+            </section>
+        </aside>
+    </main>
+
+    <div class="modal" id="gameOver" hidden>
+        <div class="modal-card">
+            <p class="kicker">Close</p>
+            <h2>閉店です</h2>
+            <p id="finalScore">スコア: 0</p>
+            <button class="ghost" id="playAgain" type="button">もう一度</button>
+        </div>
+    </div>
+
+    <script src="game.js?v=exclusionbuttonalways1"></script>
+</body>
+</html>
