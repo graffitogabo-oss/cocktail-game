@@ -666,7 +666,7 @@ h1 {
     padding: 4px 6px;
     gap: 5px;
     border-radius: 6px;
-    color: #fff;
+    color: #fff8ed;
     font-size: 0.68rem;
     font-weight: 850;
     text-align: left;
@@ -682,7 +682,7 @@ h1 {
 
 .ingredient:disabled {
     cursor: default;
-    opacity: 0.46;
+    opacity: 0.72;
 }
 
 .ingredient.selected {
@@ -699,16 +699,157 @@ h1 {
     opacity: 1;
 }
 
-.ingredient span {
+.ingredient-icon {
+    position: relative;
     display: block;
+    justify-self: center;
     width: 16px;
     height: 19px;
-    border-radius: 5px 5px 4px 4px;
-    background: currentColor;
-    box-shadow: inset 5px 0 rgba(255, 255, 255, 0.3);
+    color: #e7edf2;
 }
 
-.ingredient.correct span {
+.ingredient-icon::before,
+.ingredient-icon::after {
+    position: absolute;
+    display: block;
+    content: "";
+}
+
+.ingredient-icon-round-bottle {
+    width: 16px;
+    height: 17px;
+    margin-top: 2px;
+    border: 2px solid #e5c4ee;
+    border-radius: 7px 7px 5px 5px;
+    background: rgba(185, 113, 203, 0.42);
+}
+
+.ingredient-icon-round-bottle::before {
+    left: 4px;
+    top: -6px;
+    width: 5px;
+    height: 5px;
+    border: 2px solid #e5c4ee;
+    border-bottom: 0;
+    border-radius: 2px 2px 0 0;
+}
+
+.ingredient-icon-round-bottle::after {
+    left: 3px;
+    top: 6px;
+    width: 6px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 248, 237, 0.74);
+}
+
+.ingredient-icon-square-bottle {
+    width: 15px;
+    height: 17px;
+    margin-top: 2px;
+    border: 2px solid #d9e5ee;
+    border-radius: 2px;
+    background: rgba(105, 155, 182, 0.42);
+}
+
+.ingredient-icon-square-bottle::before {
+    left: 3px;
+    top: -6px;
+    width: 5px;
+    height: 5px;
+    border: 2px solid #d9e5ee;
+    border-bottom: 0;
+    border-radius: 1px 1px 0 0;
+}
+
+.ingredient-icon-square-bottle::after {
+    left: 2px;
+    top: 6px;
+    width: 7px;
+    height: 4px;
+    border: 1px solid rgba(255, 248, 237, 0.76);
+}
+
+.ingredient-icon-fruit {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    border: 2px solid rgba(255, 248, 237, 0.72);
+    border-radius: 50%;
+    background: #e5c64d;
+}
+
+.ingredient-icon-fruit::before {
+    right: -1px;
+    top: -4px;
+    width: 6px;
+    height: 4px;
+    border-radius: 100% 0;
+    background: #8eb35a;
+    transform: rotate(-20deg);
+}
+
+.ingredient-icon-fruit::after {
+    display: none;
+}
+
+.ingredient-icon-lime {
+    background: #7fbf62;
+}
+
+.ingredient-icon-wine-bottle {
+    width: 10px;
+    height: 17px;
+    margin-top: 2px;
+    border: 2px solid #d4ddd2;
+    border-radius: 2px 2px 3px 3px;
+    background: rgba(102, 44, 67, 0.78);
+}
+
+.ingredient-icon-wine-bottle::before {
+    left: 1px;
+    top: -7px;
+    width: 4px;
+    height: 6px;
+    border: 2px solid #d4ddd2;
+    border-bottom: 0;
+    border-radius: 1px 1px 0 0;
+}
+
+.ingredient-icon-wine-bottle::after {
+    left: 1px;
+    top: 6px;
+    width: 4px;
+    height: 5px;
+    background: rgba(255, 248, 237, 0.7);
+}
+
+.ingredient-icon-juice-carton {
+    width: 16px;
+    height: 18px;
+    margin-top: 1px;
+    border: 2px solid #e7edf2;
+    clip-path: polygon(25% 0, 75% 0, 100% 24%, 100% 100%, 0 100%, 0 24%);
+    background: rgba(238, 244, 248, 0.38);
+}
+
+.ingredient-icon-juice-carton::before {
+    left: 5px;
+    top: 2px;
+    width: 2px;
+    height: 12px;
+    background: rgba(255, 248, 237, 0.72);
+}
+
+.ingredient-icon-juice-carton::after {
+    display: none;
+}
+
+.ingredient-icon-none {
+    visibility: hidden;
+}
+
+.ingredient.correct .ingredient-icon {
     display: grid;
     width: 16px;
     height: 19px;
@@ -717,12 +858,26 @@ h1 {
     color: #bff5d8;
     font-size: 1rem;
     line-height: 1;
+    visibility: visible;
+    border: 0;
     background: transparent;
+    clip-path: none;
     box-shadow: none;
 }
 
-.ingredient.correct span::before {
+.ingredient.correct .ingredient-icon::before {
+    position: static;
+    width: auto;
+    height: auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    transform: none;
     content: "○";
+}
+
+.ingredient.correct .ingredient-icon::after {
+    display: none;
 }
 
 .actions {

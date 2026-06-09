@@ -652,14 +652,6 @@ async function loadProgress() {
     applySolvedOrders(loadSolvedOrdersFromStorage(solvedStorageKey));
 }
 
-function colorFromText(text) {
-    let hash = 0;
-    for (let index = 0; index < text.length; index += 1) {
-        hash = (hash * 31 + text.charCodeAt(index)) % 360;
-    }
-    return `hsl(${hash}, 68%, 62%)`;
-}
-
 function uniqueSteps(field) {
     return [...new Set(drinks.flatMap((order) => order.recipe.map((step) => step[field])))];
 }
@@ -683,6 +675,49 @@ function measureSortValue(measure) {
 
 function isJuiceIngredient(ingredient) {
     return ingredient.includes("ジュース");
+}
+
+const squareBottleIngredients = new Set(["ジン", "ウォッカ", "ラム", "テキーラ", "キャプテンモルガン"]);
+const namedLiqueurIngredients = new Set([
+    "アマレット",
+    "カンパリ",
+    "コアントロ",
+    "ブルーキュラソー",
+    "ベイリーズ",
+    "ベーリーズ",
+    "パッソア",
+    "マリブ",
+    "ペルノ",
+    "シャンボール",
+    "モーツアルト",
+    "ストーンズ",
+    "サザンカンフォート",
+    "カルアミルク",
+    "ミントチェリー",
+]);
+
+function ingredientIconType(ingredient) {
+    if (squareBottleIngredients.has(ingredient)) {
+        return "square-bottle";
+    }
+
+    if (ingredient === "レモン" || ingredient === "ライム") {
+        return "fruit";
+    }
+
+    if (ingredient.includes("ワイン")) {
+        return "wine-bottle";
+    }
+
+    if (isJuiceIngredient(ingredient)) {
+        return "juice-carton";
+    }
+
+    if (ingredient.includes("リキュール") || namedLiqueurIngredients.has(ingredient)) {
+        return "round-bottle";
+    }
+
+    return "none";
 }
 
 function orderIngredientOptions(options) {
@@ -774,9 +809,14 @@ function buildControls(order = null) {
         button.className = "ingredient";
         button.dataset.ingredient = ingredient;
         button.type = "button";
-        button.style.color = colorFromText(ingredient);
 
         const icon = document.createElement("span");
+        const iconType = ingredientIconType(ingredient);
+        icon.className = `ingredient-icon ingredient-icon-${iconType}`;
+        if (ingredient === "レモン" || ingredient === "ライム") {
+            icon.classList.add(`ingredient-icon-${ingredient === "レモン" ? "lemon" : "lime"}`);
+        }
+        button.classList.toggle("no-ingredient-icon", iconType === "none");
         const label = document.createTextNode(ingredient);
         button.append(icon, label);
         button.addEventListener("click", () => addIngredient(ingredient));
