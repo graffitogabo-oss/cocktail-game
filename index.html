@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Last Call Bar</title>
-    <link rel="stylesheet" href="styles.css?v=ingredienticons1">
+    <link rel="stylesheet" href="styles.css?v=recipesearch1">
 </head>
 <body>
     <main class="game-shell">
@@ -92,6 +92,15 @@
         </section>
 
         <aside class="side-panel">
+            <section class="recipe-search-panel">
+                <h2>レシピ検索</h2>
+                <div class="recipe-search-row">
+                    <input id="recipeSearchInput" type="search" placeholder="カクテル名で検索" autocomplete="off">
+                    <button id="recipeSearchClear" type="button">クリア</button>
+                </div>
+                <div id="recipeSearchResults" class="recipe-search-results"></div>
+                <div id="recipeSearchAnswer" class="recipe-search-answer" hidden></div>
+            </section>
             <section>
                 <h2>未正解</h2>
                 <p id="progressSummary">読み込み中です。</p>
@@ -126,6 +135,6 @@
         </div>
     </div>
 
-    <script src="game.js?v=ingredienticons1"></script>
+    <script src="game.js?v=recipesearch1"></script>
 </body>
 </html>

@@ -87,6 +87,10 @@ const clearSolvedButton = document.querySelector("#clearSolvedButton");
 const showExclusionsButton = document.querySelector("#showExclusionsButton");
 const exclusionExportPanel = document.querySelector("#exclusionExportPanel");
 const exclusionExportText = document.querySelector("#exclusionExportText");
+const recipeSearchInput = document.querySelector("#recipeSearchInput");
+const recipeSearchClear = document.querySelector("#recipeSearchClear");
+const recipeSearchResults = document.querySelector("#recipeSearchResults");
+const recipeSearchAnswer = document.querySelector("#recipeSearchAnswer");
 
 function choose(list) {
     return list[Math.floor(Math.random() * list.length)];
@@ -1011,6 +1015,71 @@ function renderProgress() {
     });
 }
 
+function renderRecipeSearchAnswer(order) {
+    recipeSearchAnswer.innerHTML = "";
+    recipeSearchAnswer.hidden = false;
+
+    const title = document.createElement("h3");
+    title.textContent = order.name;
+    recipeSearchAnswer.append(title);
+
+    const meta = document.createElement("div");
+    meta.className = "recipe-search-meta";
+
+    const glass = document.createElement("span");
+    glass.textContent = `グラス: ${order.glass}`;
+    meta.append(glass);
+
+    const service = document.createElement("span");
+    service.textContent = `提供: ${order.serviceMethod}`;
+    meta.append(service);
+
+    recipeSearchAnswer.append(meta);
+
+    const list = document.createElement("ul");
+    order.recipe.forEach((step) => {
+        const item = document.createElement("li");
+        item.textContent = formatStep(step);
+        list.append(item);
+    });
+    recipeSearchAnswer.append(list);
+}
+
+function renderRecipeSearch() {
+    const query = recipeSearchInput.value.trim().toLocaleLowerCase("ja");
+    recipeSearchResults.innerHTML = "";
+
+    if (!query) {
+        recipeSearchResults.textContent = "カクテル名を入力すると候補が表示されます。";
+        recipeSearchAnswer.hidden = true;
+        return;
+    }
+
+    const matches = drinks
+        .filter((order) => order.name.toLocaleLowerCase("ja").includes(query))
+        .sort((a, b) => a.name.localeCompare(b.name, "ja"))
+        .slice(0, 12);
+
+    if (matches.length === 0) {
+        recipeSearchResults.textContent = "該当するカクテルがありません。";
+        recipeSearchAnswer.hidden = true;
+        return;
+    }
+
+    matches.forEach((order) => {
+        const button = document.createElement("button");
+        button.className = "recipe-search-result";
+        button.type = "button";
+        button.textContent = order.name;
+        button.addEventListener("click", () => renderRecipeSearchAnswer(order));
+        recipeSearchResults.append(button);
+    });
+
+    if (matches.length === 1) {
+        renderRecipeSearchAnswer(matches[0]);
+    }
+}
+
 function updateStats() {
     scoreEl.textContent = state.score;
     streakEl.textContent = state.streak;
@@ -1645,6 +1714,7 @@ async function reloadOrdersFromFile() {
         ensureDailyChallenge();
     }
     resetGame();
+    renderRecipeSearch();
 
     const exclusionText = exclusionsResult.ok
         ? `exclusions.txt ${exclusionsResult.count}件も反映しました。`
@@ -1676,6 +1746,22 @@ saveSolvedButton.addEventListener("click", saveSolvedProgressSnapshot);
 loadSolvedButton.addEventListener("click", loadSolvedProgressSnapshot);
 clearSolvedButton.addEventListener("click", clearSolvedProgress);
 showExclusionsButton.addEventListener("click", showLocalStorageExclusions);
+recipeSearchInput.addEventListener("input", renderRecipeSearch);
+recipeSearchInput.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") {
+        return;
+    }
+
+    const firstResult = recipeSearchResults.querySelector(".recipe-search-result");
+    if (firstResult) {
+        firstResult.click();
+    }
+});
+recipeSearchClear.addEventListener("click", () => {
+    recipeSearchInput.value = "";
+    renderRecipeSearch();
+    recipeSearchInput.focus();
+});
 
 startButton.disabled = true;
 setControls(false);
@@ -1684,4 +1770,5 @@ Promise.all([loadOrders(), loadProgress()]).then(async () => {
     await reloadExclusions();
     buildControls(null);
     resetGame();
+    renderRecipeSearch();
 });
